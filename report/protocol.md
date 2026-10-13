@@ -11,7 +11,7 @@
 
 Machine learning models can predict cognitive impairment from clinical and brain-volume data, but a high score alone is not enough. When digital healthcare products are designed, a model should not only predict well, it should also rely on features that are consistent with established medical research. A model that predicts well for the wrong reasons cannot be trusted.
 
-*In my own words:* This research question is important because, when we design real digital products, we should design them so that they not only predict cognitive decline using the correct features, but also so that we can check whether those features are consistent with medical research.
+_In my own words:_ This research question is important because, when we design real digital products, we should design them so that they not only predict cognitive decline using the correct features, but also so that we can check whether those features are consistent with medical research.
 
 This project builds on my undergraduate final year project, CereBloom (a cognitive-health platform), where I worked on the backend/AI side. CereBloom was a software project with limited data and was not clinically validated. This project is a smaller and more careful study of one question: what are the models actually relying on?
 
@@ -37,34 +37,34 @@ This project builds on my undergraduate final year project, CereBloom (a cogniti
 - The label is **dementia status** per visit: `0` if CDR = 0, `1` if CDR > 0.
 - CDR (Clinical Dementia Rating) is the clinician's rating that defines the label, so it is **never** used as a feature.
 - Class counts: 206 rows with label 0 and 167 rows with label 1. Classes are fairly balanced, so no oversampling is planned.
-- Most label-1 rows have CDR = 0.5, which means *very mild* impairment. In this report the label is therefore described as "dementia status (including very mild)", not as a confirmed diagnosis.
+- Most label-1 rows have CDR = 0.5, which means _very mild_ impairment. In this report the label is therefore described as "dementia status (including very mild)", not as a confirmed diagnosis.
 - The `Group` column (Nondemented / Demented / Converted) is not used, because it is built from the same diagnosis information as the label.
 
 ## 5. Features
 
 **Used in Experiment B (main):**
 
-| Feature | Meaning |
-|---|---|
-| Age | Age in years |
-| Sex | Male/Female, converted to 1/0 |
-| EDUC | Years of education |
-| SES | Socioeconomic status score |
-| eTIV | Estimated total intracranial volume (head size) |
-| nWBV | Normalized whole-brain volume (how much brain tissue relative to head size) |
+| Feature | Meaning                                                                     |
+| ------- | --------------------------------------------------------------------------- |
+| Age     | Age in years                                                                |
+| Sex     | Male/Female, converted to 1/0                                               |
+| EDUC    | Years of education                                                          |
+| SES     | Socioeconomic status score                                                  |
+| eTIV    | Estimated total intracranial volume (head size)                             |
+| nWBV    | Normalized whole-brain volume (how much brain tissue relative to head size) |
 
 **Added in Experiment A:** MMSE (Mini-Mental State Examination, a 30-point cognitive test).
 
 **Excluded, and why**
 
-| Column | Reason |
-|---|---|
-| CDR | Defines the label (would leak the answer) |
-| Group | Built from the diagnosis (would leak the answer) |
-| Visit, MR Delay | Track time in the study, not the person's condition |
+| Column             | Reason                                                                 |
+| ------------------ | ---------------------------------------------------------------------- |
+| CDR                | Defines the label (would leak the answer)                              |
+| Group              | Built from the diagnosis (would leak the answer)                       |
+| Visit, MR Delay    | Track time in the study, not the person's condition                    |
 | MRI ID, Subject ID | Identifiers (Subject ID is used only to keep a person's rows together) |
-| Hand | Same value for everyone |
-| ASF | Carries almost the same information as eTIV |
+| Hand               | Same value for everyone                                                |
+| ASF                | Carries almost the same information as eTIV                            |
 
 ## 6. Experiments
 
@@ -107,7 +107,7 @@ All are reported. No single "winner metric" is chosen to make the results look b
 
 ## 8. Explainability (SHAP)
 
-- SHAP is applied to the best-performing tree-based model (Random Forest or XGBoost).
+- SHAP is applied to Logistic Regression (best performer) and Random Forest (best tree-based model), and the important features are compared between them.
 - SHAP values are computed on **held-out test data only**, not on training data.
 - Global view: which features matter most overall (summary plot).
 - Local view: 2 to 3 individual cases explained, including at least one case the model got wrong.
@@ -122,14 +122,14 @@ All are reported. No single "winner metric" is chosen to make the results look b
 
 ## 10. Risks and how they are handled
 
-| Risk | How it is handled |
-|---|---|
-| Label leakage | CDR and Group are never features |
-| Same person in train and test | Grouped cross-validation by Subject ID |
-| Preprocessing leakage | Imputation and scaling are done inside each training round only |
+| Risk                           | How it is handled                                                             |
+| ------------------------------ | ----------------------------------------------------------------------------- |
+| Label leakage                  | CDR and Group are never features                                              |
+| Same person in train and test  | Grouped cross-validation by Subject ID                                        |
+| Preprocessing leakage          | Imputation and scaling are done inside each training round only               |
 | Very small sample (150 people) | Repeated validation, report spread, avoid claiming small differences are real |
-| Overfitting through tuning | Small, simple hyperparameter choices |
-| Over-claiming | The study is not clinically validated and makes no diagnostic claim |
+| Overfitting through tuning     | Small, simple hyperparameter choices                                          |
+| Over-claiming                  | The study is not clinically validated and makes no diagnostic claim           |
 
 ## 11. Expected limitations (to be written fully in the report)
 
@@ -140,20 +140,21 @@ All are reported. No single "winner metric" is chosen to make the results look b
 
 ## 12. Related work read so far
 
-- Lundberg & Lee (2017), *A Unified Approach to Interpreting Model Predictions* (SHAP).
-- Mikhailova & Mikhailova (2026), *Machine learning approaches for early detection of cognitive decline: A comparative study using the OASIS-3 dataset*. A different, larger dataset. Gradient boosting scored best (weighted F1 about 0.86). The authors removed CDR, MMSE and diagnosis codes to avoid leakage, but used basic feature importance and not SHAP, which is the gap this project addresses. Their feature selection appears to use the full dataset before splitting, which this project avoids.
+- Lundberg & Lee (2017), _A Unified Approach to Interpreting Model Predictions_ (SHAP).
+- Mikhailova & Mikhailova (2026), _Machine learning approaches for early detection of cognitive decline: A comparative study using the OASIS-3 dataset_. A different, larger dataset. Gradient boosting scored best (weighted F1 about 0.86). The authors removed CDR, MMSE and diagnosis codes to avoid leakage, but used basic feature importance and not SHAP, which is the gap this project addresses. Their feature selection appears to use the full dataset before splitting, which this project avoids.
 - To read next: Marcus et al. (2010), the OASIS longitudinal dataset paper.
 
 ## 13. Timeline
 
-| Month | Goal |
-|---|---|
-| October | Protocol, first look at the data, baseline model |
-| November | All 3 models, Experiments A and B, evaluation |
-| December | SHAP and error analysis |
-| January | Report, graphs, GitHub cleanup |
-| February | Polish, CV, personal statement |
+| Month    | Goal                                             |
+| -------- | ------------------------------------------------ |
+| October  | Protocol, first look at the data, baseline model |
+| November | All 3 models, Experiments A and B, evaluation    |
+| December | SHAP and error analysis                          |
+| January  | Report, graphs, GitHub cleanup                   |
+| February | Polish, CV, personal statement                   |
 
 ## Changes log
 
 - v1.0 (October 2026): first version.
+- v1.1 (October 2026): SHAP will be applied to Logistic Regression as well as Random Forest, because Logistic Regression performed best in the repeated validation.
